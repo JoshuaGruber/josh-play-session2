@@ -25,6 +25,7 @@ const TodoItem = ({ todo, onSave }) => {
     <Box display="flex" alignItems="center" sx={{ bgcolor: editing ? 'primary.light' : 'background.paper', p: 2, borderRadius: 2 }}>
       {editing ? (
         <TextField
+          label="Edit todo text"
           value={text}
           onChange={e => setText(e.target.value)}
           variant="outlined"
