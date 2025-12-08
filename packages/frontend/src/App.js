@@ -1,8 +1,26 @@
 import React, { useState, useEffect } from 'react';
 import './App.css';
+import TodoItem from './TodoItem';
 
 function App() {
   const [data, setData] = useState([]);
+    // Editable todo save handler
+    const handleEditSave = async (id, newText) => {
+      try {
+        const response = await fetch(`/api/items/${id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name: newText })
+        });
+        if (!response.ok) throw new Error('Failed to update item');
+        const updated = await response.json();
+        setData(data.map(item => item.id === id ? updated : item));
+        setError(null);
+      } catch (err) {
+        setError('Error updating item: ' + err.message);
+        console.error('Error updating item:', err);
+      }
+    };
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [newItem, setNewItem] = useState('');
@@ -103,7 +121,10 @@ function App() {
               {data.length > 0 ? (
                 data.map((item) => (
                   <li key={item.id}>
-                    <span>{item.name}</span>
+                    <TodoItem
+                      todo={{ id: item.id, text: item.name }}
+                      onSave={handleEditSave}
+                    />
                     <button 
                       onClick={() => handleDelete(item.id)}
                       className="delete-btn"
